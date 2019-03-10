@@ -70,7 +70,7 @@ class FlowersDataset():
     
     def __repr__(self):
         return (
-            f'Flowers Dataset\n'
+            f'\nFlowers Dataset\n'
             f'Num of images: {len(self.X)}\n'
             f'Input shape: {self.input_shape}\n'
             f'Output shape: {self.output_shape}\n'

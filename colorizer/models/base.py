@@ -18,9 +18,6 @@ class Model:
     """Base class, to be subclassed by predictors for specific type of data."""
     def __init__(self, dataset_cls: type, network_fn: Callable, dataset_args: Dict=None, network_args: Dict=None):
         self.name = f'{self.__class__.__name__}_{dataset_cls.__name__}_{network_fn.__name__}'
-        self.weights_filename = self.name+"_weighths.hdf5"
-        
-        print(self.name)
 
         if dataset_args is None:
             dataset_args = {}
@@ -30,8 +27,11 @@ class Model:
             network_args = {}
             
         self.network = network_fn(self.data.input_shape, self.data.output_shape, **network_args)
-        self.network.summary()
-
+        # self.network.summary()
+        
+    def weight_filename(self):
+        DIRNAME.mkdir(parents=True, exists_ok=True)
+        return str(DIRNAME/ f'{self.name}_weights.h5')
         
     def fit(self, dataset, batch_size=32, epochs=10, learning_rate = 0.001, callbacks=[]):
 
@@ -40,6 +40,7 @@ class Model:
         self.network.fit(dataset.Xdata_train, dataset.Ydata_train, batch_size = batch_size, epochs = epochs,
                         validation_data=(dataset.Xdata_val, dataset.Ydata_val), callbacks=callbacks)
         
+        ## TODO add option for fit_generator (in case dataset is too big to fit in ram or we need to augmnet it)
 
     def evaluate(self, x, y):
         ## TODO
@@ -55,7 +56,7 @@ class Model:
         return ['accuracy']
 
     def load_weights(self):
-        self.network.load_weights(DIRNAME+self.weights_filename)
+        self.network.load_weights(self.weights_filename)
 
     def save_weights(self):
-        self.network.save_weights(DIRNAME+self.weights_filename)
+        self.network.save_weights(self.weights_filename)

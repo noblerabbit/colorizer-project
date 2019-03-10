@@ -112,7 +112,7 @@ if __name__ == '__main__':
         },
         "train_args": {
             "batch_size": 8,
-            "epochs": 10,
+            "epochs": 1,
             "learning_rate": 0.0001
         }
     }
