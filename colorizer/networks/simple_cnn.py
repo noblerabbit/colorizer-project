@@ -4,7 +4,7 @@ from tensorflow.keras.models import Sequential, Model
 
 
 
-def simple_cnn() -> Model:
+def simple_cnn(input_shape, output_shape) -> Model:
     encoder_input = Input(shape=(256, 256, 1,))
     encoder_output = Conv2D(64, (3,3), activation='relu', padding='same', strides=2)(encoder_input)
     encoder_output = BatchNormalization()(encoder_output)
@@ -27,4 +27,4 @@ def simple_cnn() -> Model:
         
     model = Model(inputs=encoder_input, outputs=decoder_output)
     
-    return model;
+    return model
