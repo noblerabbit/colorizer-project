@@ -12,7 +12,6 @@ from colorizer.datasets.base import Dataset
 
 
 DIRNAME = pathlib.Path(__file__).parents[1].resolve() / 'weights/'
-print("[INFO] DIRNAME is: {}".format(DIRNAME))
 
 class Model:
     """Base class, to be subclassed by predictors for specific type of data."""
@@ -29,7 +28,7 @@ class Model:
         self.network = network_fn(self.data.input_shape, self.data.output_shape, **network_args)
         # self.network.summary()
         
-    def weight_filename(self):
+    def weights_filename(self):
         DIRNAME.mkdir(parents=True, exists_ok=True)
         return str(DIRNAME/ f'{self.name}_weights.h5')
         
@@ -40,7 +39,7 @@ class Model:
         self.network.fit(dataset.Xdata_train, dataset.Ydata_train, batch_size = batch_size, epochs = epochs,
                         validation_data=(dataset.Xdata_val, dataset.Ydata_val), callbacks=callbacks)
         
-        ## TODO add option for fit_generator (in case dataset is too big to fit in ram or we need to augmnet it)
+        ## TODO add option for fit_generator (in case dataset is too big to fit in ram or we want to augmnet the data)
 
     def evaluate(self, x, y):
         ## TODO
@@ -56,7 +55,7 @@ class Model:
         return ['accuracy']
 
     def load_weights(self):
-        self.network.load_weights(self.weights_filename)
+        self.network.load_weights(self.weights_filename())
 
     def save_weights(self):
-        self.network.save_weights(self.weights_filename)
+        self.network.save_weights(self.weights_filename())

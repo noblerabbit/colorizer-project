@@ -1,4 +1,4 @@
-# Flowers dataset.
+# Flowers dataset class. This is constrcted based on the hdf5 file.
 
 import os
 import h5py
@@ -26,8 +26,6 @@ class FlowersDataset():
             self.X = [file for file in f.keys() if file.startswith("X")]
             self.Y = [file for file in f.keys() if file.startswith("Y")]
             
-            #form X and Y pick  random Xtest, Ytest, X_train, Y_train filenames
-            
             #get input and output dims of data
             width_x, height_x = f[self.X[0]][:].shape
             width_y, heigth_y, depth_y = f[self.Y[0]][:].shape
@@ -35,7 +33,7 @@ class FlowersDataset():
         # create train val split
         self.X_train, self.X_val, self.Y_train, self.Y_val = train_test_split(
         self.X, self.Y, test_size=self.train_val_split, random_state=42)
-        print(len(self.X_train), len(self.Y_train))
+        # print(len(self.X_train), len(self.Y_train))
 
         
         #define numpy arrays
@@ -44,16 +42,19 @@ class FlowersDataset():
         self.Xdata_val = np.zeros((len(self.X_val), width_y, height_x, 1))
         self.Ydata_val =np.zeros((len(self.Y_val), width_x, heigth_y, depth_y))
         
-        print("[INFO] Total of Samples: {}, ".format(len(self.X)))
-        print('[INFO] Number of Training samples: {}'.format(len(self.X_train)))
-        print("[INFO] Number of Validation samples: {}".format(len(self.Y_train)))
+        self.sizeofdataset = self.Xdata_train.nbytes + self.Ydata_train.nbytes + self.Xdata_val.nbytes + self.Ydata_val.nbytes
         
-        print("[INFO] Size of Xdata_train = {} MB".format(round(self.Xdata_train.nbytes/1000000,2)))
-        print("[INFO] Size of Ydata_train = {} MB".format(round(self.Ydata_train.nbytes/1000000, 2)))
+        # print("[INFO] Total of Samples: {}, ".format(len(self.X)))
+        # print('[INFO] Number of Training samples: {}'.format(len(self.X_train)))
+        # print("[INFO] Number of Validation samples: {}".format(len(self.Y_train)))
+        
+        # print("[INFO] Size of Xdata_train = {} MB".format(round(self.Xdata_train.nbytes/1000000,2)))
+        # print("[INFO] Size of Ydata_train = {} MB".format(round(self.Ydata_train.nbytes/1000000, 2)))
         
         #loading the data to memory
         print("[INFO] Total size of the memory (RAM): {} MB".format(round(virtual_memory().total/1000000),2))
-        print("[INFO] Loading data to memory...")
+        print("[INFO] Total size of dataset: {} MB".format(round(self.sizeofdataset/1000000),2))
+        print("[INFO] Loading dataset into RAM...")
         
         start = time.time()
         with h5py.File(DATA_FILENAME) as f:
@@ -70,12 +71,13 @@ class FlowersDataset():
     
     def __repr__(self):
         return (
-            f'\nFlowers Dataset\n'
-            f'Num of images: {len(self.X)}\n'
-            f'Input shape: {self.input_shape}\n'
-            f'Output shape: {self.output_shape}\n'
-            f'Train samples : {len(self.X_train)} samples\n'
-            f'Validation samples: {len(self.X_val)} samples\n'
+            f'\nFlowers Dataset:\n'
+            f'    Num of images: {len(self.X)}\n'
+            f'    Train samples : {len(self.X_train)} samples\n'
+            f'    Validation samples: {len(self.X_val)} samples\n'
+            f'    Input shape: {self.input_shape}\n'
+            f'    Output shape: {self.output_shape}\n'
+            f'    Array names: Xdata_train, Ydata_train,\n\t\t Xdata_val, Ydata_val\n'
         )
 
 
